@@ -45,7 +45,7 @@ class ProviderClient(
     private val jsonMedia = "application/json; charset=utf-8".toMediaType()
 
     fun presetOf(providerId: String): ProviderPreset =
-        presets.firstOrNull { it.id == providerId } ?: presets.last()
+        presets[providerId] ?: presets.values.last()
 
     /** Пресет с учётом кастомных URL участника (для провайдера «Кастомный»). */
     fun presetFor(providerId: String, baseUrl: String = "", chatPath: String = "", modelsPath: String = ""): ProviderPreset {

@@ -48,7 +48,7 @@ class AppContainer(context: Context) {
     val providerClient = ProviderClient(
         okHttp = okHttp,
         streamClient = streamOkHttp,
-        presets = ProviderPresets.all,
+        presets = ProviderPresets.all.associateBy { it.id },
     )
 
     val scheduler = RequestScheduler(appSettings = appSettings, scope = appScope)
