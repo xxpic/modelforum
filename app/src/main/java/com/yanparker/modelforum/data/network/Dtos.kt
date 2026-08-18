@@ -90,5 +90,5 @@ sealed class ApiException(message: String) : Exception(message) {
     class NoBalance(message: String = "Недостаточно средств / исчерпана дневная квота") : ApiException(message)
     class ServerError(val code: Int, message: String, val details: String? = null) :
         ApiException("Ошибка $code: $message")
-    class Network(val cause: java.io.IOException) : ApiException("Сеть недоступна: ${cause.message}")
+    class Network(val ex: java.io.IOException) : ApiException("Сеть недоступна: ${ex.message}")
 }

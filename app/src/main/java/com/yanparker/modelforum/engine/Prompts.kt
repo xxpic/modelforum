@@ -39,7 +39,7 @@ object Prompts {
             acc += l.second.length
         }
         val dropped = lines.size - kept.size
-        val note = if (dropped > 0) "контекст сокращён на $dropped сообщений, тема сохраняется" else null
+        val note = if (dropped > 0) "контекст сокращён на $dropped сообщений, тема сохраняется" else ""
         return kept to note
     }
 

@@ -31,22 +31,10 @@ object NotificationHelper {
         text: String,
         discussionId: Long,
     ): android.app.Notification {
-        fun action(action: String, icon: Int, label: String): NotificationCompat.Action {
-            val intent = Intent(context, DiscussionService::class.java)
-                .setAction(action)
-                .putExtra("discussionId", discussionId)
-            val pi = PendingIntent.getService(
-                context,
-                discussionId.toInt() + action.hashCode(),
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
-            )
-            return NotificationCompat.Action(icon, label, pi)
-        }
         return NotificationCompat.Builder(context, CHANNEL_DISCUSSION)
             .setContentTitle(title)
             .setContentText(text)
-            .setSmallIcon(android.R.drawable.ic_popup_discussion)
+            .setSmallIcon(android.R.drawable.ic_menu_agenda)
             .setOngoing(true)
             .addAction(
                 NotificationCompat.Action(

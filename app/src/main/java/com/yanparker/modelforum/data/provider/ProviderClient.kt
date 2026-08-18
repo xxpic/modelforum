@@ -7,6 +7,9 @@ import com.yanparker.modelforum.data.network.HttpClients
 import com.yanparker.modelforum.data.network.KeyInfoResponse
 import com.yanparker.modelforum.data.network.ModelListResponse
 import com.yanparker.modelforum.data.network.SseChunk
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.serialization.json.Json
 import okhttp3.Call
@@ -26,6 +29,11 @@ import kotlin.coroutines.resumeWithException
 data class StreamResult(
     val text: String,
     val reason: String?,
+)
+
+data class FreePlatformInfo(
+    val limitRemaining: Long?,
+    val limitReset: String?,
 )
 
 class ProviderClient(
@@ -103,8 +111,8 @@ class ProviderClient(
                     gotAnything = true
                     accumulated.append(d)
 if (cont.isActive) {
-                    kotlinx.coroutines.CoroutineScope(cont.context + kotlinx.coroutines.Job())
-                        .launch { onDelta(d) }
+                    val scope = CoroutineScope(cont.context + Job())
+                    scope.launch { onDelta(d) }
                 }
                 }
                 if (choice.finishReason != null) finishReason = choice.finishReason
@@ -184,7 +192,7 @@ fun buildChatRequest(preset: ProviderPreset, key: String, body: okhttp3.RequestB
 
 suspend fun <T> OkHttpClient.executeParsed(request: Request, parser: (String) -> T): T =
     suspendCancellableCoroutine { cont ->
-        enqueue(object : Callback {
+        this.enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 if (!cont.isCancelled) cont.resumeWithException(ApiException.Network(e))
             }

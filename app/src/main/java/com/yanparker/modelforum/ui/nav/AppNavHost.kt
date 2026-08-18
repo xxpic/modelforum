@@ -84,10 +84,10 @@ fun MainTabs(nav: androidx.navigation.NavHostController, container: AppContainer
         bottomBar = {
             NavigationBar {
                 val tabs = listOf(
-                    Triple(Icons.Filled.Forum, "Дискуссии") ,
-                    Triple(Icons.Filled.QuestionAnswer, "Вопрос"),
-                    Triple(Icons.Filled.Groups, "Участники"),
-                    Triple(Icons.Filled.Settings, "Настройки"),
+                    Pair(Icons.Filled.Forum, "Дискуссии"),
+                    Pair(Icons.Filled.QuestionAnswer, "Вопрос"),
+                    Pair(Icons.Filled.Groups, "Участники"),
+                    Pair(Icons.Filled.Settings, "Настройки"),
                 )
                 tabs.forEachIndexed { i, (icon, label) ->
                     NavigationBarItem(

@@ -13,9 +13,11 @@ import com.yanparker.modelforum.data.repository.MessageRepository
 import com.yanparker.modelforum.data.repository.ParticipantRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withTimeout
@@ -68,7 +70,7 @@ class QuestionEngine(
             maxTokens = settings.maxTokens,
         )
 
-        val results = mutableMapOf<ParticipantRef, String>()
+        val results = java.util.concurrent.ConcurrentHashMap<ParticipantRef, String>()
         coroutineScope {
             val jobs = participants.map { p ->
                 async {

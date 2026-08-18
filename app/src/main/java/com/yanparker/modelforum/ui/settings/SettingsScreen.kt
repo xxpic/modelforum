@@ -15,6 +15,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -32,6 +33,7 @@ import com.yanparker.modelforum.di.AppContainer
 import com.yanparker.modelforum.ui.Factory
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(container: AppContainer, modifier: Modifier = Modifier) {
     val vm: com.yanparker.modelforum.ui.SettingsViewModel =
@@ -69,7 +71,7 @@ fun SettingsScreen(container: AppContainer, modifier: Modifier = Modifier) {
             SettingSlider("Температура: %.1f".format(s.temperature),
                 s.temperature.toFloat(), 0f, 1.5f, { vm.update(temperature = it.toDouble()) })
 
-            androidx.compose.foundation.layout.HorizontalDivider()
+            androidx.compose.material3.HorizontalDivider()
 
             Text("Данные", style = MaterialTheme.typography.titleMedium)
             Button(onClick = { vm.share(context) }, modifier = Modifier.fillMaxWidth()) {

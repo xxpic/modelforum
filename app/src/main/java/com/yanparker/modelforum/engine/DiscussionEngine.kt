@@ -17,6 +17,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.ZoneOffset
@@ -210,7 +211,7 @@ discussionRepository.insert(d.copy(participantIds = ids))
             return
         }
 
-        val settings = kotlinx.coroutines.flow.first(appSettings.flow)
+        val settings = appSettings.flow.first()
         val context = buildContext(d, settings.contextTrimChars)
         val messages = listOf(
             ChatMessage("system", Prompts.forumSystem(p.name)),

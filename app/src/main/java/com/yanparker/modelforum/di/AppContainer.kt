@@ -4,7 +4,7 @@ import android.content.Context
 import com.yanparker.modelforum.data.db.AppDatabase
 import com.yanparker.modelforum.data.key.KeyStorage
 import com.yanparker.modelforum.data.network.HttpClients
-import com.yanparker.modelforum.data.prefs.AppSettings
+import com.yanparker.modelforum.data.prefs.AppSettingsStore
 import com.yanparker.modelforum.data.provider.ProviderClient
 import com.yanparker.modelforum.data.provider.ProviderPresets
 import com.yanparker.modelforum.data.repository.DiscussionRepository

@@ -22,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -40,7 +41,7 @@ import com.yanparker.modelforum.di.AppContainer
 import com.yanparker.modelforum.ui.Factory
 import com.yanparker.modelforum.ui.common.ParticipantAvatar
 
-@OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
+@OptIn(ExperimentalMaterial3Api::class, androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
 @Composable
 fun AskScreen(container: AppContainer, modifier: Modifier = Modifier) {
     val vm: com.yanparker.modelforum.ui.AskViewModel =

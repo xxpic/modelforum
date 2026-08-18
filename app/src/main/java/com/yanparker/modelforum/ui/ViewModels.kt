@@ -11,6 +11,7 @@ import com.yanparker.modelforum.di.AppContainer
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -22,11 +23,12 @@ class ParticipantsViewModel(private val container: AppContainer) : ViewModel() {
     val busy = MutableStateFlow(false)
     val message = MutableStateFlow<String?>(null)
 
-    fun add(providerId: String, name: String, modelId: String, apiKey: String, colorIndex: Int) {
+    fun add(providerId: String, name: String, modelId: String, apiKey: String, colorIndex: Int,
+        customBaseUrl: String = "", customChatPath: String = "", customModelsPath: String = "") {
         viewModelScope.launch {
             busy.value = true
             try {
-                container.participantRepository.add(providerId, name, modelId, apiKey, colorIndex)
+                container.participantRepository.add(providerId, name, modelId, apiKey, colorIndex, customBaseUrl, customChatPath, customModelsPath)
                 message.value = "Участник добавлен"
             } catch (e: Exception) {
                 message.value = "Ошибка: ${e.message}"
@@ -36,9 +38,10 @@ class ParticipantsViewModel(private val container: AppContainer) : ViewModel() {
         }
     }
 
-    fun update(id: Long, name: String, modelId: String, colorIndex: Int) {
+    fun update(id: Long, name: String, modelId: String, colorIndex: Int,
+        customBaseUrl: String = "", customChatPath: String = "", customModelsPath: String = "") {
         viewModelScope.launch {
-            container.participantRepository.update(id, name, modelId, colorIndex)
+            container.participantRepository.update(id, name, modelId, colorIndex, customBaseUrl, customChatPath, customModelsPath)
         }
     }
 
@@ -110,6 +113,7 @@ class ForumViewModel(private val container: AppContainer, private val discussion
 
     val discussion: StateFlow<DiscussionEntity> =
         container.discussionRepository.byId(discussionId)
+            .map { it ?: DiscussionEntity(title = "") }
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), DiscussionEntity(title = ""))
 
     val messages: StateFlow<List<MessageEntity>> =
@@ -177,13 +181,13 @@ class SettingsViewModel(private val container: AppContainer) : ViewModel() {
     fun export(): String = kotlinx.coroutines.runBlocking {
         buildString {
             val discussions = container.discussionRepository.allOnce()
-            val messages = container.messageRepository.allOnce()
+            val messages = container.messageRepository.allOnce().groupBy { it.discussionId }
             val parts = container.participantRepository.allOnce().associate { it.id to it.name }
             for (d in discussions) {
                 append("=== ").append(d.title).append(" [").append(d.mode).append("] ")
                 append(java.text.SimpleDateFormat("dd.MM.yyyy HH:mm", java.util.Locale.getDefault()).format(java.util.Date(d.createdAt)))
                 append("\n")
-                messages[d.id].forEach { m ->
+                (messages[d.id] ?: emptyList()).forEach { m ->
                     val author = when (m.role) {
                         "user" -> "Вы"
                         "judge" -> "Судья (${parts[m.participantId] ?: "?"})"
