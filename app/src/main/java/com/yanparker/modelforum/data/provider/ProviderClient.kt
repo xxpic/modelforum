@@ -38,9 +38,9 @@ data class FreePlatformInfo(
 class ProviderClient(
     private val okHttp: OkHttpClient,
     private val streamClient: OkHttpClient,
-    private val presets: List<ProviderPreset>,
-    private val json: Json = HttpClients.json,
+    private val presets: Map<String, ProviderPreset>,
 ) {
+    private val json = sharedJson
 
     private val jsonMedia = "application/json; charset=utf-8".toMediaType()
 
@@ -243,8 +243,16 @@ fun parseRetryAfter(raw: String?): Long {
     }
 }
 
+val sharedJson: Json = Json {
+    ignoreUnknownKeys = true
+    explicitNulls = false
+    encodeDefaults = false
+    coerceInputValues = true
+    isLenient = true
+}
+
 fun parseChatResponse(raw: String): ChatResponse {
-    val resp = HttpClients.json.decodeFromString(ChatResponse.serializer(), raw)
+    val resp = sharedJson.decodeFromString(ChatResponse.serializer(), raw)
     if (resp.error != null) throw parseApiError(resp.error.code, resp.error.message)
     return resp
 }
