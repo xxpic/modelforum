@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Форум ИИ-моделей</string>
+    <string name="notification_channel_discussion">Обсуждения</string>
+    <string name="notification_channel_discussion_desc">Уведомления о ходе дискуссий в фоне</string>
+</resources>
