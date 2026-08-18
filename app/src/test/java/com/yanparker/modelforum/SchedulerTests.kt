@@ -19,21 +19,25 @@ class SchedulerIntervalTest {
     fun `requests are spaced by min interval`() = runTest {
         val interval = 50L
         var last = 0L
+        var now = 0L
         val lock = Mutex()
 
         suspend fun submit(block: suspend () -> Unit) = lock.withLock {
-            val wait = interval - (System.currentTimeMillis() - last)
-            if (wait > 0) delay(wait)
-            last = System.currentTimeMillis()
+            val wait = interval - (now - last)
+            if (wait > 0) {
+                delay(wait)
+                now += wait
+            }
+            last = now
             block()
         }
 
-        val times = mutableListOf<Long>()
+        val stamps = mutableListOf<Long>()
         repeat(5) {
-            submit { times.add(System.currentTimeMillis()) }
+            submit { stamps.add(now) }
         }
-        for (i in 1 until times.size) {
-            assertTrue("шаг ${times[i] - times[i - 1]} должен быть ≥ interval: ", times[i] - times[i - 1] >= interval)
+        for (i in 1 until stamps.size) {
+            assertTrue("шаг ${stamps[i] - stamps[i - 1]} должен быть ≥ interval: ", stamps[i] - stamps[i - 1] >= interval)
         }
     }
 }
