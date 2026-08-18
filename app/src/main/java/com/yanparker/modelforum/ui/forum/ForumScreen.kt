@@ -57,9 +57,10 @@ import com.yanparker.modelforum.ui.common.ParticipantAvatar
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ForumScreen(
-    nav: androidx.navigation.NavHostController,
     container: AppContainer,
     discussionId: Long,
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val vm: com.yanparker.modelforum.ui.ForumViewModel =
         viewModel(key = "forum_$discussionId", factory = Factory.forum(container, discussionId))
@@ -73,6 +74,7 @@ fun ForumScreen(
     }
 
     Scaffold(
+        modifier = modifier,
         topBar = {
             TopAppBar(
                 title = {
@@ -97,7 +99,7 @@ fun ForumScreen(
                     }
                 },
                 navigationIcon = {
-                    IconButton(onClick = { nav.popBackStack() }) {
+                    IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Назад")
                     }
                 },

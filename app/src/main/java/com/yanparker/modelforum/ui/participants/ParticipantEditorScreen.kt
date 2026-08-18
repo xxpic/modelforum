@@ -60,9 +60,9 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ParticipantEditorScreen(
-    nav: androidx.navigation.NavHostController,
     container: AppContainer,
     editId: Long?,
+    onBack: () -> Unit,
 ) {
     val vm: com.yanparker.modelforum.ui.ParticipantsViewModel =
         viewModel(factory = Factory.participants(container))
@@ -121,7 +121,7 @@ fun ParticipantEditorScreen(
             TopAppBar(
                 title = { Text(if (editId == null) "Новый участник" else "Редактирование") },
                 navigationIcon = {
-                    IconButton(onClick = { nav.popBackStack() }) {
+                    IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Назад")
                     }
                 },
@@ -313,7 +313,7 @@ fun ParticipantEditorScreen(
                                     if (providerId == "custom") customModels else "")
                                 if (key.isNotBlank()) vm.updateKey(editId, key)
                             }
-                            nav.popBackStack()
+                            onBack()
                         }
                     },
                     modifier = Modifier.fillMaxWidth(),

@@ -3,7 +3,6 @@ package com.yanparker.modelforum.di
 import android.content.Context
 import com.yanparker.modelforum.data.db.AppDatabase
 import com.yanparker.modelforum.data.key.KeyStorage
-import com.yanparker.modelforum.data.network.HttpClients
 import com.yanparker.modelforum.data.prefs.AppSettingsStore
 import com.yanparker.modelforum.data.provider.ProviderClient
 import com.yanparker.modelforum.data.provider.ProviderPresets
@@ -19,6 +18,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import okhttp3.OkHttpClient
+import java.util.concurrent.TimeUnit
 
 class AppContainer(context: Context) {
 
@@ -32,11 +33,21 @@ class AppContainer(context: Context) {
     val discussionRepository = DiscussionRepository(database.discussionDao())
     val messageRepository = MessageRepository(database.messageDao())
 
-    val httpClients = HttpClients()
+    private val okHttp: OkHttpClient = OkHttpClient.Builder()
+        .connectTimeout(20, TimeUnit.SECONDS)
+        .readTimeout(120, TimeUnit.SECONDS)
+        .writeTimeout(30, TimeUnit.SECONDS)
+        .build()
+
+    private val streamOkHttp: OkHttpClient = OkHttpClient.Builder()
+        .connectTimeout(20, TimeUnit.SECONDS)
+        .readTimeout(0, TimeUnit.MILLISECONDS)
+        .writeTimeout(30, TimeUnit.SECONDS)
+        .build()
 
     val providerClient = ProviderClient(
-        okHttp = httpClients.client,
-        streamClient = httpClients.streamClient,
+        okHttp = okHttp,
+        streamClient = streamOkHttp,
         presets = ProviderPresets.all,
     )
 

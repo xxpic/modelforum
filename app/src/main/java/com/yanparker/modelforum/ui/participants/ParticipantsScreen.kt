@@ -46,8 +46,9 @@ import com.yanparker.modelforum.ui.common.StatusDot
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ParticipantsScreen(
-    nav: androidx.navigation.NavHostController,
     container: AppContainer,
+    onAdd: () -> Unit,
+    onEdit: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val vm: com.yanparker.modelforum.ui.ParticipantsViewModel =
@@ -58,7 +59,7 @@ fun ParticipantsScreen(
         modifier = modifier,
         topBar = { TopAppBar(title = { Text("Участники") }) },
         floatingActionButton = {
-            FloatingActionButton(onClick = { nav.navigate(com.yanparker.modelforum.ui.nav.Routes.ADD_PARTICIPANT) }) {
+            FloatingActionButton(onClick = onAdd) {
                 Icon(Icons.Filled.Add, contentDescription = "Добавить")
             }
         }
@@ -77,7 +78,7 @@ fun ParticipantsScreen(
         } else {
             LazyColumn(Modifier.fillMaxSize().padding(inner), contentPadding = androidx.compose.foundation.layout.PaddingValues(12.dp)) {
                 items(participants, key = { it.id }) { p ->
-                    ParticipantCard(p, vm, nav)
+                    ParticipantCard(p, vm, onEdit)
                 }
             }
         }
@@ -88,7 +89,7 @@ fun ParticipantsScreen(
 private fun ParticipantCard(
     p: ParticipantEntity,
     vm: com.yanparker.modelforum.ui.ParticipantsViewModel,
-    nav: androidx.navigation.NavHostController,
+    onEdit: (Long) -> Unit,
 ) {
     val provider = ProviderPresets.byId(p.providerId)
     var showDelete by remember { mutableStateOf(false) }
@@ -127,7 +128,7 @@ private fun ParticipantCard(
                 }
             }
             Switch(checked = p.enabled, onCheckedChange = { vm.toggleEnabled(p) })
-            IconButton(onClick = { nav.navigate(com.yanparker.modelforum.ui.nav.Routes.editParticipant(p.id)) }) {
+            IconButton(onClick = { onEdit(p.id) }) {
                 Icon(Icons.Filled.Edit, contentDescription = "Изменить")
             }
             IconButton(onClick = {

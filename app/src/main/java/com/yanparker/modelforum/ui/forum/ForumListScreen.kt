@@ -49,8 +49,8 @@ import com.yanparker.modelforum.ui.common.StatusDot
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ForumListScreen(
-    nav: androidx.navigation.NavHostController,
     container: AppContainer,
+    onOpenForum: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val vm: com.yanparker.modelforum.ui.ForumListViewModel =
@@ -79,7 +79,7 @@ fun ForumListScreen(
         } else {
             LazyColumn(Modifier.fillMaxSize().padding(inner), contentPadding = PaddingValues(12.dp)) {
                 items(discussions, key = { it.id }) { d ->
-                    DiscussionCard(d, vm, nav)
+                    DiscussionCard(d, vm) { onOpenForum(d.id) }
                 }
             }
         }
@@ -101,11 +101,11 @@ fun ForumListScreen(
 private fun DiscussionCard(
     d: DiscussionEntity,
     vm: com.yanparker.modelforum.ui.ForumListViewModel,
-    nav: androidx.navigation.NavHostController,
+    onOpen: () -> Unit,
 ) {
     Card(
         modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
-        onClick = { nav.navigate(com.yanparker.modelforum.ui.nav.Routes.forum(d.id)) },
+        onClick = { onOpen() },
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
     ) {
         Column(Modifier.padding(12.dp)) {

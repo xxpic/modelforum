@@ -3,7 +3,6 @@ package com.yanparker.modelforum.data.provider
 import com.yanparker.modelforum.data.network.ApiException
 import com.yanparker.modelforum.data.network.ChatRequest
 import com.yanparker.modelforum.data.network.ChatResponse
-import com.yanparker.modelforum.data.network.HttpClients
 import com.yanparker.modelforum.data.network.KeyInfoResponse
 import com.yanparker.modelforum.data.network.ModelListResponse
 import com.yanparker.modelforum.data.network.SseChunk
@@ -192,7 +191,7 @@ fun buildChatRequest(preset: ProviderPreset, key: String, body: okhttp3.RequestB
 
 suspend fun <T> OkHttpClient.executeParsed(request: Request, parser: (String) -> T): T =
     suspendCancellableCoroutine { cont ->
-        this.enqueue(object : Callback {
+        newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 if (!cont.isCancelled) cont.resumeWithException(ApiException.Network(e))
             }
